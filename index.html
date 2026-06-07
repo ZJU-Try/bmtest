@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>保密刷题</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <p class="brand-kicker">题库训练</p>
+        <h1 class="brand-title">保密知识刷题</h1>
+      </div>
+      <button id="favBtn" class="ghost-btn" type="button" aria-label="收藏当前题">☆ 收藏</button>
+    </header>
+
+    <section class="stats-panel">
+      <div class="stat-card">
+        <span class="stat-label">当前</span>
+        <strong id="progressText" class="stat-value">0 / 0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">收藏</span>
+        <strong id="favCount" class="stat-value">0</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">错题</span>
+        <strong id="wrongCount" class="stat-value">0</strong>
+      </div>
+    </section>
+
+    <nav class="mode-switch" aria-label="题目筛选">
+      <button class="mode-btn is-active" data-mode="all" type="button">全部</button>
+      <button class="mode-btn" data-mode="starred" type="button">可作答</button>
+      <button class="mode-btn" data-mode="wrong" type="button">错题集</button>
+      <button class="mode-btn" data-mode="fav" type="button">收藏夹</button>
+    </nav>
+
+    <section class="question-card">
+      <div class="question-meta">
+        <span id="qTag" class="q-tag">题目</span>
+        <span id="qNumber" class="q-number">#0</span>
+      </div>
+      <p id="qText" class="q-text">正在加载题库...</p>
+
+      <form id="answerForm" class="answer-form" autocomplete="off">
+        <div id="inputsWrap" class="inputs-wrap"></div>
+        <button id="submitBtn" class="primary-btn" type="submit">提交答案</button>
+      </form>
+
+      <p id="feedback" class="feedback" aria-live="polite"></p>
+    </section>
+
+    <footer class="actions">
+      <button id="prevBtn" class="ghost-btn" type="button">上一题</button>
+      <button id="nextBtn" class="primary-btn" type="button">下一题</button>
+    </footer>
+  </main>
+
+  <script src="bm-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
