@@ -50,15 +50,14 @@
       <button id="startExamBtn" class="mode-btn tab-btn" type="button">模拟考试</button>
     </nav>
 
-    <section id="allTools" class="all-tools" aria-label="题库模式工具">
-      <input id="jumpNumberInput" class="jump-input" type="number" min="1" placeholder="输入题号" />
-      <button id="jumpNumberBtn" class="ghost-btn" type="button">跳转</button>
-      <button id="shuffleAllBtn" class="ghost-btn" type="button">开启乱序</button>
-    </section>
-
     <section id="questionCard" class="question-card">
       <div class="question-meta">
         <span id="qTag" class="q-tag">题目</span>
+        <section id="allTools" class="all-tools" aria-label="题库模式工具">
+          <input id="jumpNumberInput" class="jump-input" type="number" min="1" placeholder="题号" />
+          <button id="jumpNumberBtn" class="ghost-btn" type="button">跳转</button>
+          <button id="shuffleAllBtn" class="ghost-btn" type="button">开启乱序</button>
+        </section>
         <span id="qNumber" class="q-number">#0</span>
       </div>
       <p id="qText" class="q-text">正在加载题库...</p>

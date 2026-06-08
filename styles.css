@@ -175,21 +175,28 @@ body.exam-mode .stat-card-btn.is-active {
 }
 
 .all-tools {
-  margin-top: 10px;
   display: flex;
-  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .jump-input {
-  flex: 1;
-  min-width: 0;
+  width: 72px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  padding: 10px 12px;
-  font-size: 14px;
+  padding: 7px 8px;
+  font-size: 13px;
   font-family: "Manrope", sans-serif;
   background: rgba(255, 255, 255, 0.78);
   color: var(--ink);
+}
+
+.all-tools .ghost-btn {
+  padding: 7px 10px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .mode-btn,
@@ -284,10 +291,10 @@ body.exam-mode #shuffleAllBtn.is-active {
 }
 
 .question-meta {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .q-tag {
