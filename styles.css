@@ -182,15 +182,30 @@ body.exam-mode .stat-card-btn.is-active {
   min-width: 0;
 }
 
-.jump-input {
-  width: 72px;
+.jump-group {
+  display: inline-flex;
+  align-items: stretch;
   border: 1px solid var(--line);
   border-radius: 11px;
+  background: rgba(255, 255, 255, 0.78);
+  overflow: hidden;
+}
+
+.jump-input {
+  width: 72px;
+  border: 0;
   padding: 7px 8px;
   font-size: 13px;
   font-family: "Manrope", sans-serif;
-  background: rgba(255, 255, 255, 0.78);
+  background: transparent;
   color: var(--ink);
+}
+
+.jump-group #jumpNumberBtn {
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
 }
 
 .all-tools .ghost-btn {
@@ -292,7 +307,7 @@ body.exam-mode #shuffleAllBtn.is-active {
 
 .question-meta {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   align-items: center;
   gap: 8px;
 }
@@ -310,6 +325,7 @@ body.exam-mode #shuffleAllBtn.is-active {
 }
 
 .q-number {
+  display: none;
   color: var(--muted);
   font-family: "Manrope", sans-serif;
   font-size: 13px;
