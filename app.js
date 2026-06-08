@@ -1,6 +1,7 @@
                                                                                                                               const STORAGE_KEY = {
   fav: "bm_favorites",
   wrong: "bm_wrongs",
+                                                                                                                                mastered: "bm_mastered",
   mode: "bm_mode",
                                                                                                                                 examRecords: "bm_exam_records",
                                                                                                                                 shuffleAll: "bm_shuffle_all",
@@ -24,7 +25,8 @@ const state = {
   exam: null,
   examRecords: JSON.parse(localStorage.getItem(STORAGE_KEY.examRecords) || "[]"),
   favorites: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY.fav) || "[]")),
-  wrongs: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY.wrong) || "[]"))
+  wrongs: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY.wrong) || "[]")),
+  mastered: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY.mastered) || "[]"))
 };
 
 const el = {
@@ -41,8 +43,10 @@ const el = {
   progressText: document.getElementById("progressText"),
   favCard: document.getElementById("favCard"),
   wrongCard: document.getElementById("wrongCard"),
+  masteredCard: document.getElementById("masteredCard"),
   favCount: document.getElementById("favCount"),
   wrongCount: document.getElementById("wrongCount"),
+  masteredCount: document.getElementById("masteredCount"),
   inputsWrap: document.getElementById("inputsWrap"),
   answerForm: document.getElementById("answerForm"),
   submitBtn: document.getElementById("submitBtn"),
@@ -50,6 +54,7 @@ const el = {
   answerKey: document.getElementById("answerKey"),
   feedback: document.getElementById("feedback"),
   removeWrongBtn: document.getElementById("removeWrongBtn"),
+  masteredBtn: document.getElementById("masteredBtn"),
   nextBtn: document.getElementById("nextBtn"),
   prevBtn: document.getElementById("prevBtn"),
   exitExamBtn: document.getElementById("exitExamBtn"),
@@ -153,6 +158,9 @@ function getDeck() {
   if (state.mode === "fav") {
     return state.questions.filter((q) => state.favorites.has(q.id));
   }
+  if (state.mode === "mastered") {
+    return state.questions.filter((q) => state.mastered.has(q.id));
+  }
 
   const baseDeck = getBaseDeckForMode(state.mode);
   if (!isShuffleMode(state.mode) || !isShuffleEnabledForMode(state.mode)) {
@@ -253,9 +261,8 @@ function setAllToolsVisibility() {
   if (!visible) {
     return;
   }
-  const inAllMode = state.mode === "all";
-  el.jumpNumberInput.style.display = inAllMode ? "block" : "none";
-  el.jumpNumberBtn.style.display = inAllMode ? "inline-flex" : "none";
+  el.jumpNumberInput.style.display = "block";
+  el.jumpNumberBtn.style.display = "inline-flex";
   const enabled = isShuffleEnabledForMode(state.mode);
   el.shuffleAllBtn.textContent = enabled ? "关闭乱序" : "开启乱序";
   el.shuffleAllBtn.classList.toggle("is-active", enabled);
@@ -264,6 +271,7 @@ function setAllToolsVisibility() {
 function persistSets() {
   localStorage.setItem(STORAGE_KEY.fav, JSON.stringify([...state.favorites]));
   localStorage.setItem(STORAGE_KEY.wrong, JSON.stringify([...state.wrongs]));
+  localStorage.setItem(STORAGE_KEY.mastered, JSON.stringify([...state.mastered]));
 }
 
 function persistExamRecords() {
@@ -276,6 +284,7 @@ function updateModeButtons() {
   allModeButtons.forEach((b) => b.classList.remove("is-active"));
   el.favCard.classList.toggle("is-active", !inExam && state.mode === "fav");
   el.wrongCard.classList.toggle("is-active", !inExam && state.mode === "wrong");
+  el.masteredCard.classList.toggle("is-active", !inExam && state.mode === "mastered");
 
   if (inExam) {
     el.startExamBtn.classList.add("is-active");
@@ -293,11 +302,13 @@ function updateStats(deck) {
     el.progressText.textContent = `${state.exam.current + 1} / ${EXAM_QUESTION_COUNT}`;
     el.favCount.textContent = String(state.favorites.size);
     el.wrongCount.textContent = String(state.wrongs.size);
+    el.masteredCount.textContent = String(state.mastered.size);
     return;
   }
 
   el.favCount.textContent = String(state.favorites.size);
   el.wrongCount.textContent = String(state.wrongs.size);
+  el.masteredCount.textContent = String(state.mastered.size);
   el.progressText.textContent = deck.length ? `${state.currentIndex + 1} / ${deck.length}` : "0 / 0";
 }
 
@@ -536,6 +547,7 @@ function renderExamQuestion() {
   setExamTheme(true);
   const q = state.exam.questions[state.exam.current];
   setLayout({ showQuestion: true, showProfile: false, showActions: true });
+  el.favBtn.style.display = "inline-flex";
 
   el.qTag.textContent = "模拟考试";
   el.qNumber.textContent = `第 ${state.exam.current + 1} / ${EXAM_QUESTION_COUNT} 题`;
@@ -543,6 +555,8 @@ function renderExamQuestion() {
   el.feedback.textContent = "模拟考试模式不即时判对错。";
   el.feedback.className = "feedback";
   el.favBtn.textContent = state.favorites.has(q.id) ? "★ 已收藏" : "☆ 收藏";
+  el.favBtn.classList.toggle("is-active", state.favorites.has(q.id));
+  el.masteredBtn.style.display = "none";
 
   renderAnswerInputs(q);
 
@@ -594,6 +608,9 @@ function renderQuestion() {
     el.answerKey.textContent = "";
     el.feedback.textContent = "";
     el.favBtn.textContent = "☆ 收藏";
+    el.favBtn.style.display = "none";
+    el.favBtn.classList.remove("is-active");
+    el.masteredBtn.style.display = "none";
     el.removeWrongBtn.style.display = "none";
     return;
   }
@@ -604,9 +621,15 @@ function renderQuestion() {
   el.qText.textContent = `${q.number}. ${q.prompt}`;
   el.feedback.textContent = "";
   el.feedback.className = "feedback";
+  el.favBtn.style.display = "inline-flex";
 
   const isFav = state.favorites.has(q.id);
+  const isMastered = state.mastered.has(q.id);
   el.favBtn.textContent = isFav ? "★ 已收藏" : "☆ 收藏";
+  el.favBtn.classList.toggle("is-active", isFav);
+  el.masteredBtn.style.display = "inline-flex";
+  el.masteredBtn.textContent = isMastered ? "✓ 已会（再点移出）" : "✓ 我会了！";
+  el.masteredBtn.classList.toggle("is-active", isMastered);
   el.removeWrongBtn.style.display = state.mode === "wrong" ? "inline-flex" : "none";
 
   renderAnswerInputs(q);
@@ -632,7 +655,7 @@ function removeCurrentWrong() {
 }
 
 function jumpToQuestionNumber() {
-  if (state.exam || state.mode !== "all") {
+  if (state.exam || !isShuffleMode(state.mode)) {
     return;
   }
 
@@ -799,6 +822,24 @@ function toggleFavorite() {
   renderQuestion();
 }
 
+function toggleMastered() {
+  const deck = state.exam && state.exam.active ? state.exam.questions : getDeck();
+  const index = state.exam && state.exam.active ? state.exam.current : state.currentIndex;
+  if (!deck.length) {
+    return;
+  }
+
+  const q = deck[index];
+  if (state.mastered.has(q.id)) {
+    state.mastered.delete(q.id);
+  } else {
+    state.mastered.add(q.id);
+  }
+
+  persistSets();
+  renderQuestion();
+}
+
 async function load() {
   try {
     let md = "";
@@ -837,6 +878,7 @@ el.prevBtn.addEventListener("click", () => move(-1));
 el.exitExamBtn.addEventListener("click", () => finalizeExam(true));
 el.startExamBtn.addEventListener("click", startExam);
 el.favBtn.addEventListener("click", toggleFavorite);
+el.masteredBtn.addEventListener("click", toggleMastered);
 el.removeWrongBtn.addEventListener("click", removeCurrentWrong);
 el.toggleAnswerBtn.addEventListener("click", toggleAnswer);
 el.jumpNumberBtn.addEventListener("click", jumpToQuestionNumber);
@@ -849,6 +891,7 @@ el.jumpNumberInput.addEventListener("keydown", (e) => {
 el.shuffleAllBtn.addEventListener("click", toggleAllShuffle);
 el.favCard.addEventListener("click", () => switchMode("fav"));
 el.wrongCard.addEventListener("click", () => switchMode("wrong"));
+el.masteredCard.addEventListener("click", () => switchMode("mastered"));
 el.modeBtns.forEach((btn) => btn.addEventListener("click", () => switchMode(btn.dataset.mode)));
 
 window.addEventListener("beforeunload", (e) => {
