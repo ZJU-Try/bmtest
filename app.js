@@ -8,6 +8,7 @@ const state = {
   questions: [],
   mode: localStorage.getItem(STORAGE_KEY.mode) || "all",
   currentIndex: 0,
+  showAnswer: false,
   favorites: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY.fav) || "[]")),
   wrongs: new Set(JSON.parse(localStorage.getItem(STORAGE_KEY.wrong) || "[]"))
 };
@@ -22,6 +23,8 @@ const el = {
   inputsWrap: document.getElementById("inputsWrap"),
   answerForm: document.getElementById("answerForm"),
   submitBtn: document.getElementById("submitBtn"),
+  toggleAnswerBtn: document.getElementById("toggleAnswerBtn"),
+  answerKey: document.getElementById("answerKey"),
   feedback: document.getElementById("feedback"),
   nextBtn: document.getElementById("nextBtn"),
   prevBtn: document.getElementById("prevBtn"),
@@ -86,6 +89,16 @@ function parseQuestions(mdText) {
   });
 }
 
+function getAnswerText(question) {
+  if (!question.star) {
+    return "";
+  }
+  if (question.blanks.length) {
+    return question.blanks.join("；");
+  }
+  return question.raw;
+}
+
 function getDeck() {
   if (state.mode === "wrong") {
     return state.questions.filter((q) => state.wrongs.has(q.id));
@@ -121,12 +134,26 @@ function renderAnswerInputs(question) {
 
   if (!question.star) {
     el.submitBtn.style.display = "none";
+    el.toggleAnswerBtn.style.display = "none";
     el.answerForm.style.display = "none";
+    el.answerKey.style.display = "none";
+    el.answerKey.textContent = "";
     return;
   }
 
   el.answerForm.style.display = "flex";
   el.submitBtn.style.display = "inline-flex";
+  el.toggleAnswerBtn.style.display = "inline-flex";
+
+  if (state.showAnswer) {
+    el.answerKey.style.display = "block";
+    el.answerKey.textContent = `答案：${getAnswerText(question)}`;
+    el.toggleAnswerBtn.textContent = "隐藏答案";
+  } else {
+    el.answerKey.style.display = "none";
+    el.answerKey.textContent = "";
+    el.toggleAnswerBtn.textContent = "显示答案";
+  }
 
   if (!question.blanks.length) {
     const input = document.createElement("input");
@@ -160,6 +187,8 @@ function renderQuestion() {
     el.qNumber.textContent = "#-";
     el.qText.textContent = "当前筛选下暂无题目。";
     el.answerForm.style.display = "none";
+    el.answerKey.style.display = "none";
+    el.answerKey.textContent = "";
     el.feedback.textContent = "";
     el.favBtn.textContent = "☆ 收藏";
     return;
@@ -168,13 +197,27 @@ function renderQuestion() {
   const q = deck[state.currentIndex];
   el.qTag.textContent = q.star ? "可作答（填空）" : "阅读题";
   el.qNumber.textContent = `#${q.number}`;
-  el.qText.textContent = q.prompt;
+  el.qText.textContent = `${q.number}. ${q.prompt}`;
   el.feedback.textContent = "";
   el.feedback.className = "feedback";
 
   const isFav = state.favorites.has(q.id);
   el.favBtn.textContent = isFav ? "★ 已收藏" : "☆ 收藏";
 
+  renderAnswerInputs(q);
+}
+
+function toggleAnswer() {
+  const deck = getDeck();
+  if (!deck.length) {
+    return;
+  }
+  const q = deck[state.currentIndex];
+  if (!q.star) {
+    return;
+  }
+
+  state.showAnswer = !state.showAnswer;
   renderAnswerInputs(q);
 }
 
@@ -218,6 +261,7 @@ function move(step) {
     return;
   }
   state.currentIndex = (state.currentIndex + step + deck.length) % deck.length;
+  state.showAnswer = false;
   renderQuestion();
 }
 
@@ -225,6 +269,7 @@ function switchMode(mode) {
   state.mode = mode;
   localStorage.setItem(STORAGE_KEY.mode, mode);
   state.currentIndex = 0;
+  state.showAnswer = false;
   renderQuestion();
 }
 
@@ -281,6 +326,7 @@ el.answerForm.addEventListener("submit", (e) => {
 el.nextBtn.addEventListener("click", () => move(1));
 el.prevBtn.addEventListener("click", () => move(-1));
 el.favBtn.addEventListener("click", toggleFavorite);
+el.toggleAnswerBtn.addEventListener("click", toggleAnswer);
 el.modeBtns.forEach((btn) => btn.addEventListener("click", () => switchMode(btn.dataset.mode)));
 
 load();

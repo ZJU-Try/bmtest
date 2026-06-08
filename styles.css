@@ -201,6 +201,12 @@ body {
   gap: 10px;
 }
 
+.answer-tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
 .inputs-wrap {
   display: grid;
   gap: 8px;
@@ -229,6 +235,19 @@ body {
 
 .feedback.bad {
   color: var(--warn);
+}
+
+.answer-key {
+  margin: 8px 0 0;
+  min-height: 22px;
+  color: #0d5149;
+  background: rgba(217, 239, 233, 0.62);
+  border: 1px solid rgba(15, 97, 87, 0.22);
+  border-radius: 10px;
+  padding: 8px 10px;
+  line-height: 1.6;
+  font-size: 14px;
+  display: none;
 }
 
 .actions {

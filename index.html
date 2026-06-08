@@ -53,8 +53,13 @@
 
       <form id="answerForm" class="answer-form" autocomplete="off">
         <div id="inputsWrap" class="inputs-wrap"></div>
-        <button id="submitBtn" class="primary-btn" type="submit">提交答案</button>
+        <div class="answer-tools">
+          <button id="submitBtn" class="primary-btn" type="submit">提交答案</button>
+          <button id="toggleAnswerBtn" class="ghost-btn" type="button">显示答案</button>
+        </div>
       </form>
+
+      <p id="answerKey" class="answer-key"></p>
 
       <p id="feedback" class="feedback" aria-live="polite"></p>
     </section>
