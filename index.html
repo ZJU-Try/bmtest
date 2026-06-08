@@ -19,7 +19,9 @@
         <p class="brand-kicker">题库训练</p>
         <h1 class="brand-title">保密知识刷题</h1>
       </div>
-      <button id="favBtn" class="ghost-btn" type="button" aria-label="收藏当前题">☆ 收藏</button>
+      <div class="topbar-actions">
+        <button id="profileBtn" class="mode-btn" data-mode="profile" type="button">个人中心</button>
+      </div>
     </header>
 
     <section class="stats-panel">
@@ -27,29 +29,40 @@
         <span class="stat-label">当前</span>
         <strong id="progressText" class="stat-value">0 / 0</strong>
       </div>
-      <div class="stat-card">
+      <button id="favCard" class="stat-card stat-card-btn" type="button" aria-label="进入收藏夹">
         <span class="stat-label">收藏</span>
         <strong id="favCount" class="stat-value">0</strong>
-      </div>
-      <div class="stat-card">
+      </button>
+      <button id="wrongCard" class="stat-card stat-card-btn" type="button" aria-label="进入错题集">
         <span class="stat-label">错题</span>
         <strong id="wrongCount" class="stat-value">0</strong>
-      </div>
+      </button>
     </section>
 
     <nav class="mode-switch" aria-label="题目筛选">
-      <button class="mode-btn is-active" data-mode="all" type="button">全部</button>
-      <button class="mode-btn" data-mode="starred" type="button">可作答</button>
-      <button class="mode-btn" data-mode="wrong" type="button">错题集</button>
-      <button class="mode-btn" data-mode="fav" type="button">收藏夹</button>
+      <button class="mode-btn tab-btn is-active" data-mode="all" type="button">全部</button>
+      <button class="mode-btn tab-btn" data-mode="starred" type="button">可作答</button>
+      <button class="mode-btn tab-btn" data-mode="unstarred" type="button">不可作答</button>
+      <button id="startExamBtn" class="mode-btn tab-btn" type="button">模拟考试</button>
     </nav>
 
-    <section class="question-card">
+    <section id="allTools" class="all-tools" aria-label="题库模式工具">
+      <input id="jumpNumberInput" class="jump-input" type="number" min="1" placeholder="输入题号" />
+      <button id="jumpNumberBtn" class="ghost-btn" type="button">跳转</button>
+      <button id="shuffleAllBtn" class="ghost-btn" type="button">开启乱序</button>
+    </section>
+
+    <section id="questionCard" class="question-card">
       <div class="question-meta">
         <span id="qTag" class="q-tag">题目</span>
         <span id="qNumber" class="q-number">#0</span>
       </div>
       <p id="qText" class="q-text">正在加载题库...</p>
+
+      <div class="question-actions">
+        <button id="favBtn" class="ghost-btn" type="button" aria-label="收藏当前题">☆ 收藏</button>
+        <button id="removeWrongBtn" class="warn-btn" type="button">移出错题集</button>
+      </div>
 
       <form id="answerForm" class="answer-form" autocomplete="off">
         <div id="inputsWrap" class="inputs-wrap"></div>
@@ -64,9 +77,12 @@
       <p id="feedback" class="feedback" aria-live="polite"></p>
     </section>
 
-    <footer class="actions">
+    <section id="profilePanel" class="profile-panel"></section>
+
+    <footer id="actionsBar" class="actions">
       <button id="prevBtn" class="ghost-btn" type="button">上一题</button>
       <button id="nextBtn" class="primary-btn" type="button">下一题</button>
+      <button id="exitExamBtn" class="warn-btn" type="button">提前退出并结算</button>
     </footer>
   </main>
 
